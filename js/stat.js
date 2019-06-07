@@ -1,7 +1,8 @@
 var GISTO_X = 100;
 var GISTO_Y = 240;
 var COL_WIDTH = 40; //зарезервированное место для текста/колонки
-var GAP = 50;  //марджин справа
+var GAP_COL = 50;  //марджин справа
+var GAP_ROW = 20;
 var GISTO_COLORS = ['red', 'blue', 'yellow', 'green'];
 
 var drawPopup = function(ctx, color, x, y){
@@ -34,9 +35,13 @@ window.renderStatistics = function(ctx, names, times) {
   var maxTime = getMaxElement(times);
 
   for (var i = 0; i < names.length; i++) {
+    ctx.textBaseline = 'bottom';
     ctx.fillStyle = 'black';
-    ctx.fillText(names[i], (GISTO_X + GAP + (COL_WIDTH + GAP) * i), GISTO_Y + 10);
+    ctx.fillText(names[i], (GISTO_X + GAP_COL + (COL_WIDTH + GAP_COL) * i), GISTO_Y + GAP_ROW);
+
+    ctx.fillText(parseInt(times[i]), (GISTO_X + GAP_COL + (COL_WIDTH + GAP_COL) * i), GISTO_Y - ((150 * times[i]) / maxTime)) - GAP_ROW*2;
     ctx.fillStyle = GISTO_COLORS[i];
-    ctx.fillRect( (GISTO_X + GAP + (COL_WIDTH + GAP) * i), GISTO_Y - ((150 * times[i]) / maxTime), 40, (150 * times[i]) / maxTime);
+    ctx.fillRect( (GISTO_X + GAP_COL + (COL_WIDTH + GAP_COL) * i), GISTO_Y - ((150 * times[i]) / maxTime), 40, (150 * times[i]) / maxTime);
+
   }
 };
