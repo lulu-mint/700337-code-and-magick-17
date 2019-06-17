@@ -3,8 +3,8 @@
 var GISTOGRAM_X = 100;
 var GISTOGRAM_Y = 240;
 var COL_WIDTH = 40;
-var GAP_COL = 50;
-var GAP_ROW = 20;
+var GISTOGRAM_HORIZONTAL_GAP = 50;
+var GISTOGRAM_VERTICAL_GAP = 20;
 
 var drawPopup = function (ctx, color, x, y) {
   ctx.fillStyle = color;
@@ -23,7 +23,7 @@ var getMaxElement = function (arr) {
   return maxElement;
 };
 
-var canvasText = function (ctx) {
+var printCanvasText = function (ctx) {
   ctx.fillStyle = 'black';
   ctx.font = '16px PT Mono';
   ctx.textBaseline = 'hanging';
@@ -35,37 +35,43 @@ var canvasText = function (ctx) {
   }
 };
 
-var randomOpacity = function () {
-  return (parseInt(Math.random() * 10, 10) / 10);
+var randomRectColor = function (name) {
+  var color;
+  var RAND_OPACITY = (parseInt(Math.random() * 10, 10) / 10) + 0.08;
+  if (name === 'Вы') {
+    color = 'rgba(255, 0, 0, 1)';
+  } else {
+    color = 'rgba(0, 0, 255, ' + RAND_OPACITY + ')';
+  }
+  return color;
 };
 
 window.renderStatistics = function (ctx, names, times) {
   drawPopup(ctx, 'rgba(0, 0, 0, 0.7)', 110, 20);
   drawPopup(ctx, 'white', 100, 10);
 
-  canvasText(ctx, 'Ура вы победили!', 'Список результатов:');
+  printCanvasText(ctx, 'Ура вы победили!', 'Список результатов:');
 
   var maxTime = getMaxElement(times);
 
-  ctx.textBaseline = 'bottom';
-  ctx.fillStyle = 'black';
   for (var i = 0; i < names.length; i++) {
-
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = 'black';
+    // высота прямоугольника
     var gistogramColumnHeight = (150 * times[i]) / maxTime;
-    var gistogramLabelPositionX = GISTOGRAM_X + GAP_COL + (COL_WIDTH + GAP_COL) * i;
-    var gistogramLabelPositionY = GISTOGRAM_Y + GAP_ROW;
+    // положение Х названия + пробел между колонками + (ширина колонки + пробел между) * i
+    var gistogramLabelPositionX = GISTOGRAM_X + GISTOGRAM_HORIZONTAL_GAP + (COL_WIDTH + GISTOGRAM_HORIZONTAL_GAP) * i;
+    // положение У названия + высота строчки
+    var gistogramLabelPositionY = GISTOGRAM_Y + GISTOGRAM_VERTICAL_GAP;
+    // позиция таймера У = положение гистограммы У - высота прямоугольника
     var gistogramTimePositionY = GISTOGRAM_Y - gistogramColumnHeight;
+    // позиция прямоугольника У = положение гистограммы У - высота прямоугольника
     var gistorgamRectPositionY = GISTOGRAM_Y - gistogramColumnHeight;
 
     ctx.fillText(names[i], gistogramLabelPositionX, gistogramLabelPositionY);
     ctx.fillText(parseInt(times[i], 10), gistogramLabelPositionX, gistogramTimePositionY);
 
-    if (names[i] === 'Вы') {
-      ctx.fillStyle = 'rgba(255, 0, 0, 1)';
-    } else {
-      var RAND_OPACITY = randomOpacity();
-      ctx.fillStyle = 'rgba(0, 0, 255, ' + RAND_OPACITY + ')';
-    }
+    ctx.fillStyle = randomRectColor(names[i]);
     ctx.fillRect(gistogramLabelPositionX, gistorgamRectPositionY, 40, gistogramColumnHeight);
   }
 };
